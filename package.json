@@ -1,27 +1,23 @@
 {
   "name": "game-on",
-  "version": "1.0.0",
-  "description": "bootstrap v 5.1.3",
+  "version": "1.0.1",
+  "description": "Game-On, MERNified",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "seed": "node seeds/index.js"
+    "start": "node server --ignore client",
+    "develop": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
+    "install": "cd server && npm i && cd ../client && npm i",
+    "seed": "cd server && npm run seed",
+    "build": "cd client && npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.0.0",
-    "connect-session-sequelize": "^7.0.4",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-handlebars": "^5.2.0",
-    "express-session": "^1.17.1",
-    "gatsby-plugin-emoji-cursor": "^1.0.2",
-    "image-js": "^0.35.5",
-    "mysql2": "^2.2.5",
-    "ripple-effects": "^1.0.2",
-    "sequelize": "^6.3.5"
+  "devDependencies": {
+    "concurrently": "^5.1.0"
+  },
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
   }
 }
