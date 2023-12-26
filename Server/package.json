@@ -1,12 +1,12 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Express Server for game on",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "watch": "nodemon",
-    "seed": "node seeds/seed.js"
+    "seed": "node seeders/seed.js"
   },
   "keywords": [],
   "author": "",
@@ -15,9 +15,9 @@
     "@apollo/server": "^4.9.5",
     "bcrypt": "^5.0.0",
     "express": "^4.17.2",
+    "graphql": "^16.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^7.0.2",
-    "graphql": "^16.6.0"
+    "mongoose": "^7.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
