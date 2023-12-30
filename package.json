@@ -1,7 +1,7 @@
 {
   "name": "game-on",
   "version": "1.0.1",
-  "description": "Game-On, MERNified",
+  "description": "",
   "main": "server.js",
   "scripts": {
     "start": "node server --ignore client",

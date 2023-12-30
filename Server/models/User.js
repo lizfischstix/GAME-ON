@@ -1,51 +1,55 @@
-const { Schema, model } = require("mongoose");
-const bcrypt = require("bcrypt");
+const { Schema, model } = require('mongoose');
+const bcrypt = require('bcrypt');
 
-const savedSchema = new Schema({
-  game: {
-    type: Schema.Types.ObjectId,
-    ref: 'Game',
-    required: true,
-  },
-  favorite: {
-    type: Boolean,
-    default: false,
-  },
-});
+// import schema from Game.js
+const bookSchema = require('./Game');
 
-const userSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
-      message: 'Invalid email format',
+const userSchema = new Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
     },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      match: [/.+@.+\..+/, 'Must use a valid email address'],
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    // set savedBooks to be an array of data that adheres to the bookSchema
+    savedGames: [gameSchema],
   },
-  password: {
-    type: String,
-    required: true,
-    minlength: 8,
-  },
-  savedGames: [savedSchema],
+  // set this to use virtual below
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
+);
+
+// hash user password
+userSchema.pre('save', async function (next) {
+  if (this.isNew || this.isModified('password')) {
+    const saltRounds = 10;
+    this.password = await bcrypt.hash(this.password, saltRounds);
+  }
+
+  next();
 });
 
-// Define a pre-save hook to hash the password before saving the user
-userSchema.pre('save', async function (next) {
-  if (this.isModified('password') || this.isNew) {
-    try {
-      const hashedPassword = await bcrypt.hash(this.password, 10);
-      this.password = hashedPassword;
-    } catch (error) {
-      return next(error);
-    }
-  }
-  next();
+// custom method to compare and validate password for logging in
+userSchema.methods.isCorrectPassword = async function (password) {
+  return bcrypt.compare(password, this.password);
+};
+
+// when we query a user, we'll also get another field called `gameCount` with the number of saved games we have
+userSchema.virtual('gameCount').get(function () {
+  return this.savedGames.length;
 });
 
 const User = model('User', userSchema);
