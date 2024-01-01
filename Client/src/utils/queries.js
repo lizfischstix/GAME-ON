@@ -5,9 +5,8 @@ export const QUERY_ME = gql`
     me {
       _id
       email
-      userName
+      username  // Corrected field name
       savedGames {
-        _id
         title
         thumbnail
         shortDescription
@@ -19,37 +18,3 @@ export const QUERY_ME = gql`
     }
   }
 `;
-
-// export const QUERY_INCOME = gql`
-//   query income($incomeId: ID!) {
-//     income(incomeId: $incomeId) {
-//       _id
-//       amount
-//       createdAt
-//       description
-//     }
-//   }
-// `;
-
-// export const QUERY_EXPENSES = gql`
-//   query expenses($expenseId: ID!) {
-//     expense(expenseId: $expenseId) {
-//       _id
-//       amount
-//       createdAt
-//       description
-//     }
-//   }
-// `;
-
-// export const QUERY_EXPENSE = gql`
-//   query expense($expenseId: ID!) {
-//     expense(expenseId: $expenseId) {
-//       _id
-//       amount
-//       description
-//       category
-//       createdAt
-//     }
-//   }
-// `;

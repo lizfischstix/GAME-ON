@@ -1,80 +1,93 @@
-import React from "react";
-import Auth from '../../utils/auth';
-import { useQuery } from "@apollo/client";
-import { QUERY_ME } from '../../utils/queries';
+import * as React from 'react';
+import {
+  Container,
+  Card,
+  Button,
+  Grid,
+  Typography,
+} from '@mui/material';
 
+import { useQuery, useMutation } from '@apollo/client';
+import { QUERY_ME } from '../utils/queries';
+import { REMOVE_GAME } from '../utils/mutations';
+import { removeGameId } from '../utils/localStorage';
 
-const Dash = () => {
-    // Check if the user is logged in
-    if (!Auth.loggedIn()) {
-        return (
-            <>
-                <Grid container justifyContent="space-around" sx={{ marginTop: 2 }}>
-                    <a href="/Login" style={{ textDecoration: 'none' }}>
-                        <Button variant="contained" color="success">
-                            Log In
-                        </Button>
-                    </a>
-                    <a href="/Signup" style={{ textDecoration: 'none' }}>
-                        <Button variant="contained" color="success">
-                            Sign Up
-                        </Button>
-                    </a>
-                </Grid>
-            </>
-        );
-    };
+import Auth from '../utils/auth';
 
-    //   const addExpense = (event) => {
-    //     event.preventDefault();
-    //     window.location.assign("/expense");
-    //   };
+const SavedGames = () => {
+  const { loading, data } = useQuery(QUERY_ME);
+  const [removeGame, { error }] = useMutation(REMOVE_GAME);
 
-    //   const addIncome = (event) => {
-    //     event.preventDefault();
-    //     window.location.assign("/income");
-    //   };
+  const userData = data?.me || {};
 
-    //   const { loading, data } = useQuery(QUERY_ME, {
-    //     fetchPolicy: "no-cache",
-    //   });
+  const handleDeleteGame = async (_id) => {
+    const token = Auth.loggedIn() ? Auth.getToken() : null;
 
-    //   // Handle loading state
-    //   if (loading) {
-    //     // You can use loading skeletons or placeholders here
-    //     return <div>Loading...</div>;
-    //   }
+    if (!token) {
+      return false;
+    }
 
-    //   if (!data) {
-    //     Auth.logout();
-    //   }
+    try {
+      const { data } = await removeGame({
+        variables: { _id },
+      });
 
-    //   // User data is available
-    //   const userInfo = data.me;
+      removeGameId(_id);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-    //   const containerStyle = {
-    //     border: "1px solid #ddd", // Add a border with a light gray color
-    //     borderRadius: "8px", // Add rounded corners
-    //     marginBottom: "20px", // Add some spacing between containers
-    //     padding: "20px", // Add internal padding
-    //     marginTop: "20px",
-    //     background: "white",
-    //     display: "flex",
-    //     justifyContent: "center"
-    //   };
+  if (loading) {
+    return <Typography variant="h2">LOADING...</Typography>;
+  }
 
-    //   const buttoncontainer = {
-    //     display: "flex",
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    //     marginBottom: "20px",
-    //     gap: "50px",
-    //   };
+  return (
+    <>
+      <div style={{ backgroundColor: '#343a40', color: 'white', padding: '5rem 0' }}>
+        <Container>
+          <Typography variant="h1">Viewing {userData.username}'s games!</Typography>
+        </Container>
+      </div>
+      <Container>
+        <Typography variant="h2" className='pt-5'>
+          {userData.savedGames?.length
+            ? `Viewing ${userData.savedGames.length} saved ${userData.savedGames.length === 1 ? 'game' : 'games'
+            }:`
+            : 'You have no saved games!'}
+        </Typography>
+        <Grid container spacing={2}>
+          {userData.savedGames?.map((game) => (
+            <Grid item xs={12} md={4} key={game._id}>
+              <Card sx={{ border: 'dark' }}>
+                {game.thumbnail ? (
+                  <Card.Img
+                    src={game.thumbnail}
+                    alt={`The cover of ${game.title}`}
+                    variant="top"
+                  />
+                ) : null}
+                <Card.Content>
+                  <Typography variant="h6">{game.title}</Typography>
+                  <Typography variant="body2" className="small">Genre: {game.genre}</Typography>
+                  <Typography variant="body1">{game.shortDescription}</Typography>
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    color="error"
+                    onClick={() => handleDeleteGame(game._id)}
+                    sx={{ mt: 2 }}
+                  >
+                    Delete this Game!
+                  </Button>
+                </Card.Content>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </>
+  );
+};
 
-
-    return (
-        <></>
-    )
-
-}
-export default Dash;
+export default SavedGames;

@@ -8,7 +8,7 @@ type User {
 }
   
   type Game {
-    id: ID!
+    gameId: ID!
     title: String!
     thumbnail: String
     shortDescription: String!
@@ -23,7 +23,7 @@ type User {
     user: User
   }
   input GameInput {
-    id: ID!
+    gameId: ID!
     title: String!
     thumbnail: String
     shortDescription: String!
@@ -35,6 +35,7 @@ type User {
 
   type Query {
     me: User
+    searchGame(query: String!): [Game]
   }
 
   type Mutation {
@@ -45,4 +46,4 @@ type User {
   }
   `;
 
-  module.exports = typeDefs;
+module.exports = typeDefs;

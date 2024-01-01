@@ -1,115 +1,92 @@
-import React from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import { Tooltip } from '@mui/material';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
-import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
-import SportsEsportsRoundedIcon from '@mui/icons-material/SportsEsportsRounded';
-import WavingHandIcon from '@mui/icons-material/WavingHand';
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+  Modal,
+  Tab,
+  Paper,
+  Tabs,
+  TabPanel,
+} from '@mui/material';
+import SignUp from './Signup.jsx';
+import LogIn from './Login.jsx';
+
 import Auth from '../utils/auth';
 
+const Nav = () => {
+  // set modal display state
+  const [showModal, setShowModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
 
-const Nav = ({ isAuthenticated }) => {
-  const [value, setValue] = React.useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
   };
 
-   const logout = (event) => {
-     event.preventDefault();
-     Auth.logout();
-   };
-
   return (
-    <Tabs
-      value={value}
-      onChange={handleChange}
+    <>
+      <AppBar position="static" color="primary">
+        <Container>
+          <Toolbar>
+            <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}>
+              Game On!
+            </Typography>
+            <Button color="inherit" component={Link} to="/GameSearch">
+              Search For Games
+            </Button>
+            <Button color="inherit" component={Link} to="/About">
+              About Game On!
+            </Button>
+            {Auth.loggedIn() ? (
+              <>
+                <Button color="inherit" component={Link} to="/saved">
+                  See Your Games
+                </Button>
+                <Button color="inherit" onClick={Auth.logout}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button color="inherit" onClick={() => setShowModal(true)}>
+                Login/Sign Up
+              </Button>
+            )}
+          </Toolbar>
+        </Container>
+      </AppBar>
 
-      orientation="horizontal"
-      aria-label="icon tabs"
-      // indicatorColor= {{color: green[900]}}
-    >
-      <Link to="/">
-        <Tooltip title="Home" placement="bottom" arrow>
-          <Tab
-            icon={
-              <HomeRoundedIcon/>
-            }
-            aria-label="Home"
-          />
-        </Tooltip>
-      </Link>
+      {/* set modal data up */}
+      <Modal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        aria-labelledby="signup-modal"
+      >
+        {/* tab container to do either signup or login component */}
+        <Paper>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+          >
+            <Tab label="Login" value="login" />
+            <Tab label="Sign Up" value="signup" />
+          </Tabs>
+        </Paper>
 
-      {Auth.loggedIn() ? (
-        <>
-          <Link to="/Dash">
-            <Tooltip title="Dashboard" placement="bottom" arrow>
-              {" "}
-              <Tab
-                icon={
-                  <SportsEsportsRoundedIcon/>
-                }
-                aria-label="Dash"
-              />
-            </Tooltip>
-          </Link>
-
-          <Link to="/Home">
-            <Tooltip title="Log Out" placement="bottom" arrow>
-              <Tab
-                icon={
-                  <LogoutRoundedIcon />
-                }
-                aria-label="Home"
-                onClick={logout}
-              />
-            </Tooltip>
-          </Link>
-        </>
-      ) : (
-        <>
-          <Link to="/Login">
-            <Tooltip title="Log In" placement="bottom" arrow>
-              {" "}
-              <Tab
-                icon={
-                  <LoginRoundedIcon/>
-                }
-                aria-label="Log In"
-              />
-            </Tooltip>
-          </Link>
-         
-          <Link to="/Signup">
-            <Tooltip title="Sign Up" placement="bottom" arrow>
-              {" "}
-              <Tab
-                icon={
-                  <AddBoxRoundedIcon/>
-                }
-                aria-label="Sign Up"
-              />
-            </Tooltip>
-          </Link>
-
-          <Link to='/About'>
-            <Tooltip title="About Us" placement='bottom' arrow>
-              {" "}
-              <Tab
-                icon={
-                  <WavingHandIcon />
-                }
-                aria-label='About Us'
-                />
-            </Tooltip>
-          </Link>
-        </>
-      )}
-    </Tabs>
+        <TabPanel value={activeTab} index="login">
+          <LogIn handleModalClose={() => setShowModal(false)} />
+        </TabPanel>
+        <TabPanel value={activeTab} index="signup">
+          <SignUp handleModalClose={() => setShowModal(false)} />
+        </TabPanel>
+      </Modal>
+    </>
   );
-}
+};
+
 export default Nav;
