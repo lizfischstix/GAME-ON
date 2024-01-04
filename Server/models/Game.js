@@ -15,10 +15,10 @@ const gameSchema = new Schema({
   thumbnail: {
     type: String,
   },
-  short_description: {
+  shortDescription: {
     type: String,
   },
-  game_url: {
+  gameUrl: {
     type: String,
     required: true,
   },

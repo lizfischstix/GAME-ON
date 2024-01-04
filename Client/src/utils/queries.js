@@ -20,15 +20,15 @@ export const QUERY_ME = gql`
 `;
 
 export const GAME_SEARCH = gql`
-{
-  gameSearch {
-    id
-    title
-    thumbnail
-    short_description
-    game_url
-    genre
-    platform
+  query GameSearch($searchTerm: String!) {
+    gameSearch(searchTerm: $searchTerm) {
+      id
+      title
+      thumbnail
+      shortDescription
+      gameUrl
+      genre
+      platform
+    }
   }
-}
-`
+`;
