@@ -1,20 +1,34 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client';
 
 export const QUERY_ME = gql`
-  query me {
+  {
     me {
       _id
+      username
       email
-      username  // Corrected field name
       savedGames {
+        id
         title
         thumbnail
-        shortDescription
-        gameUrl
+        short_description
+        game_url
         genre
         platform
-        developer
       }
     }
   }
 `;
+
+export const GAME_SEARCH = gql`
+{
+  gameSearch {
+    id
+    title
+    thumbnail
+    short_description
+    game_url
+    genre
+    platform
+  }
+}
+`

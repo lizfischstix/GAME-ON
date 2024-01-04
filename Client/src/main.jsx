@@ -1,39 +1,28 @@
 import ReactDOM from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom/dist'
-import './index.css';
-import App from './App.jsx';
-import Home from './pages/Home.jsx';
-import Dash from './pages/Dash.jsx';
-import Error from './pages/Error.jsx';
-import About from './pages/About.jsx';
-import GameSearch from './pages/GameSearch.jsx';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+import App from './App.jsx'
+import SavedGames from './pages/SavedGames.jsx'
+import GameSearch from './pages/SearchGames.jsx'
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: 
-    <App />,
-    errorElement: <Error />,
+    path: '/',
+    element: <App />,
+    errorElement: <h1 className="display-2">Wrong page!</h1>,
     children: [
       {
         index: true,
-        element: <Home />,
-      },
-      {
-        path: "/dash",
-        element: <Dash />,
-      },
-      {
-        path: "/about",
-        element: <About />
-      },
-      {
-        path: "/search",
         element: <GameSearch />
-      },
-    ],
-  },
-]);
+      }, 
+      {
+        path: '/saved',
+        element: <SavedGames />
+      }
+    ]
+  }
+])
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <RouterProvider router={router} />

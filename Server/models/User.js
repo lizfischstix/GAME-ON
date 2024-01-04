@@ -21,7 +21,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    // set savedBooks to be an array of data that adheres to the bookSchema
+    // set savedGames to be an array of data that adheres to the gameSchema
     savedGames: [gameSchema],
   },
   // set this to use virtual below

@@ -31,34 +31,32 @@ export const SAVE_GAME = gql`
       username
       email
       savedGames {
-        _id
+        id
         title
         thumbnail
-        shortDescription
-        gameUrl
+        short_description
+        game_url
         genre
         platform
-        developer
       }
     }
   }
 `;
 
 export const REMOVE_GAME = gql`
-  mutation removeGame($_id: ID!) {
-    removeGame(_id: $_id) {
+  mutation removeGame($id: ID!) {
+    removeGame(id: $id) {
       _id
       username
       email
       savedGames {
-        _id
+        id
         title
         thumbnail
-        shortDescription
-        gameUrl
+        short_description
+        game_url
         genre
         platform
-        developer
       }
     }
   }

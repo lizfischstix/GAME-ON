@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Button, TextField, Alert } from '@mui/material';
+// see SignupForm.js for comments
+
+import { useState, useEffect } from 'react';
+import { Form, Button, Alert } from 'react-bootstrap';
+
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../utils/mutations';
+
 import Auth from '../utils/auth';
 
 const LoginForm = () => {
@@ -53,47 +57,52 @@ const LoginForm = () => {
 
   return (
     <>
-      <form noValidate onSubmit={handleFormSubmit}>
+      <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
         <Alert
-          severity="error"
+          dismissible
           onClose={() => setShowAlert(false)}
-          sx={{ marginBottom: 2, display: showAlert ? 'block' : 'none' }}
+          show={showAlert}
+          variant="danger"
         >
           Something went wrong with your login credentials!
         </Alert>
-        <TextField
-          fullWidth
-          margin="normal"
-          id="email"
-          label="Email"
-          type="text"
-          variant="outlined"
-          value={userFormData.email}
-          onChange={handleInputChange}
-          required
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          id="password"
-          label="Password"
-          type="password"
-          variant="outlined"
-          value={userFormData.password}
-          onChange={handleInputChange}
-          required
-        />
+        <Form.Group className='mb-3'>
+          <Form.Label htmlFor="email">Email</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Your email"
+            name="email"
+            onChange={handleInputChange}
+            value={userFormData.email}
+            required
+          />
+          <Form.Control.Feedback type="invalid">
+            Email is required!
+          </Form.Control.Feedback>
+        </Form.Group>
+
+        <Form.Group className='mb-3'>
+          <Form.Label htmlFor="password">Password</Form.Label>
+          <Form.Control
+            type="password"
+            placeholder="Your password"
+            name="password"
+            onChange={handleInputChange}
+            value={userFormData.password}
+            required
+          />
+          <Form.Control.Feedback type="invalid">
+            Password is required!
+          </Form.Control.Feedback>
+        </Form.Group>
         <Button
-          fullWidth
-          type="submit"
-          variant="contained"
-          color="success"
           disabled={!(userFormData.email && userFormData.password)}
-          sx={{ marginTop: 2 }}
+          type="submit"
+          variant="success"
         >
           Submit
         </Button>
-      </form>
+      </Form>
     </>
   );
 };

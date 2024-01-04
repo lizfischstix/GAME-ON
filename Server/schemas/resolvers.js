@@ -1,4 +1,3 @@
-const { MongoClient } = require('mongodb');
 const { User } = require('../models');
 const { signToken, AuthenticationError } = require('../utils/auth');
 
@@ -14,87 +13,76 @@ const resolvers = {
       throw AuthenticationError;
     },
   },
-  searchGame: async (parent, { query }, context) => {
+  searchGames: async (parent, { searchTerm }, context) => {
+
     try {
-      // Connect to the MongoDB database
-      const client = new MongoClient(context.dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
-      await client.connect();
-      const db = client.db();
-
-      // Use a regular expression for case-insensitive and partial matching
-      const regexQuery = new RegExp(query, 'i');
-
-      // Use the $or operator to search in both title and genre fields
-      const searchResult = await db.collection('games').find({
+      const games = await game.find({
         $or: [
-          { title: { $regex: regexQuery } },
-          { genre: { $regex: regexQuery } },
-          { platform: { $regex: regexQuery } },
-          { developer: { $regex: regexQuery } },
+          { title: { $regex: new RegExp(searchTerm, 'i') } },
+          { genre: { $regex: new RegExp(searchTerm, 'i') } },
+          { platform: { $regex: new RegExp(searchTerm, 'i') } },
         ],
-      }).toArray();
-
-      // Close the database connection
-      await client.close();
-
-      return searchResult;
+      });
+      return games;
     } catch (error) {
-      console.error('Error searching for games:', error);
+      console.error(error);
       throw new Error('Error searching for games');
     }
   },
-}
 
-Mutation: {
-  addUser: async (parent, args) => {
-    const user = await User.create(args);
-    const token = signToken(user);
 
-    return { token, user };
-  }
-  login: async (parent, { email, password }) => {
-    const user = await User.findOne({ email });
+  Mutation: {
 
-    if (!user) {
+    addUser: async (parent, args) => {
+      const user = await User.create(args);
+      const token = signToken(user);
+
+      return { token, user };
+    },
+
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        throw AuthenticationError;
+      }
+
+      const correctPw = await user.isCorrectPassword(password);
+
+      if (!correctPw) {
+        throw AuthenticationError;
+      }
+
+      const token = signToken(user);
+      return { token, user };
+    },
+    saveGame: async (parent, { gameData }, context) => {
+      if (context.user) {
+        const updatedUser = await User.findByIdAndUpdate(
+          { _id: context.user._id },
+          { $push: { savedGames: gameData } },
+          { new: true }
+        );
+
+        return updatedUser;
+      }
+
       throw AuthenticationError;
-    }
+    },
+    removeGame: async (parent, { id }, context) => {
+      if (context.user) {
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: context.user._id },
+          { $pull: { savedGames: { id } } },
+          { new: true }
+        );
 
-    const correctPw = await user.isCorrectPassword(password);
+        return updatedUser;
+      }
 
-    if (!correctPw) {
       throw AuthenticationError;
-    }
-
-    const token = signToken(user);
-    return { token, user };
-  }
-  saveGame: async (parent, { gameData }, context) => {
-    if (context.user) {
-      const updatedUser = await User.findByIdAndUpdate(
-        { _id: context.user._id },
-        { $push: { savedGames: gameData } },
-        { new: true }
-      );
-
-      return updatedUser;
-    }
-
-    throw AuthenticationError;
-  }
-  removeGame: async (parent, { _id }, context) => {
-    if (context.user) {
-      const updatedUser = await User.findOneAndUpdate(
-        { _id: context.user._id },
-        { $pull: { savedGames: { _id } } },
-        { new: true }
-      );
-
-      return updatedUser;
-    }
-
-    throw AuthenticationError;
-  }
-  
+    },
+  },
 };
 
 module.exports = resolvers;
