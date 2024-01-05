@@ -11,8 +11,8 @@ const typeDefs = `
     id: ID!
     title: String !
     thumbnail: String 
-    short_description: String
-    game_url: String !
+    shortDescription: String
+    gameUrl: String !
     genre: String
     platform: String
   }
@@ -26,14 +26,15 @@ const typeDefs = `
     id: ID!
     title: String !
     thumbnail: String 
-    short_description: String
-    game_url: String !
+    shortDescription: String
+    gameUrl: String !
     genre: String
     platform: String
   }
 
   type Query {
     me: User
+    searchGames(searchTerm: String!): [Game]
   }
 
   type Mutation {

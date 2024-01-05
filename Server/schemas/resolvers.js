@@ -1,36 +1,31 @@
-const { User } = require('../models');
+const { User, Game } = require('../models');
 const { signToken, AuthenticationError } = require('../utils/auth');
-
 const resolvers = {
   Query: {
     me: async (parent, args, context) => {
       if (context.user) {
         const userData = await User.findOne({ _id: context.user._id }).select('-__v -password');
-
         return userData;
       }
 
       throw AuthenticationError;
     },
+    searchGames: async (parent, { searchTerm }, context) => {
+      try {
+        const games = await game.find({
+          $or: [
+            { title: { $regex: new RegExp(searchTerm, 'i') } },
+            { genre: { $regex: new RegExp(searchTerm, 'i') } },
+            { platform: { $regex: new RegExp(searchTerm, 'i') } },
+          ],
+        });
+        return games;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Error searching for games');
+      }
+    },
   },
-  searchGames: async (parent, { searchTerm }, context) => {
-
-    try {
-      const games = await game.find({
-        $or: [
-          { title: { $regex: new RegExp(searchTerm, 'i') } },
-          { genre: { $regex: new RegExp(searchTerm, 'i') } },
-          { platform: { $regex: new RegExp(searchTerm, 'i') } },
-        ],
-      });
-      return games;
-    } catch (error) {
-      console.error(error);
-      throw new Error('Error searching for games');
-    }
-  },
-
-
   Mutation: {
 
     addUser: async (parent, args) => {
@@ -58,29 +53,39 @@ const resolvers = {
     },
     saveGame: async (parent, { gameData }, context) => {
       if (context.user) {
-        const updatedUser = await User.findByIdAndUpdate(
-          { _id: context.user._id },
-          { $push: { savedGames: gameData } },
-          { new: true }
-        );
+        const user = await User.findById(context.user._id);
+        if (!user) {
+          throw new AuthenticationError('User not found.');
+        }
 
-        return updatedUser;
+        const game = await Game.create(gameData);
+        user.savedGames.push(game._id);
+
+        await user.save();
+
+        return user;
       }
 
-      throw AuthenticationError;
+      throw new AuthenticationError('Authentication required to save a game.');
     },
     removeGame: async (parent, { id }, context) => {
       if (context.user) {
-        const updatedUser = await User.findOneAndUpdate(
-          { _id: context.user._id },
-          { $pull: { savedGames: { id } } },
-          { new: true }
-        );
+        const user = await User.findById(context.user._id);
+        if (!user) {
+          throw new AuthenticationError('User not found.');
+        }
 
-        return updatedUser;
+        // Remove the game's ObjectId from the savedGames array
+        user.savedGames = user.savedGames.filter(savedGameId => savedGameId.toString() !== id);
+
+        // Save the updated user document
+        await user.save();
+
+        // Return the updated user
+        return user;
       }
 
-      throw AuthenticationError;
+      throw new AuthenticationError('Authentication required to remove a game.');
     },
   },
 };
