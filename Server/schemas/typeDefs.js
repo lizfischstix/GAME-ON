@@ -36,7 +36,6 @@ const typeDefs = `
     me: User
     searchGames(searchTerm: String!): [Game]
     allGames: [String!]!
-    allSaved: [String!]!
   }
 
   type Mutation {
