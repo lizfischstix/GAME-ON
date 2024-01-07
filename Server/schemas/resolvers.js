@@ -25,6 +25,30 @@ const resolvers = {
         throw new Error('Error searching for games');
       }
     },
+    allGames: async () => {
+      try {
+        // Fetch all games from the database
+        const games = await Game.find();
+        return games; // Return the array of games
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch games');
+      }
+    },
+    
+    allSaved: async (_, __, context) => {
+      try {
+        if (!context.user) {
+          throw new AuthenticationError('Authentication is required for this query');
+        }
+        const user = await User.findById(context.user._id).populate('savedGames');
+
+        return user.savedGames;  // Use user.savedGames to return all savedGames data
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch saved games');
+      }
+    },
   },
   Mutation: {
 

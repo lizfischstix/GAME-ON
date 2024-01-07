@@ -18,15 +18,21 @@ module.exports = {
       token = token.split(' ').pop().trim();
     }
 
-    if (!token) {
-      return req;
-    }
+    // Check the operation name to determine if authentication is required
+    const operationName = req.body.operationName || req.query.operationName;
+    
+    if (operationName === 'saveGame' || operationName === 'getSavedGames') {
+      // Authentication is required for saving or retrieving saved games
+      if (!token) {
+        throw module.exports.AuthenticationError;
+      }
 
-    try {
-      const { data } = jwt.verify(token, secret, { maxAge: expiration });
-      req.user = data;
-    } catch {
-      console.log('Invalid token');
+      try {
+        const { data } = jwt.verify(token, secret, { maxAge: expiration });
+        req.user = data;
+      } catch {
+        throw module.exports.AuthenticationError;
+      }
     }
 
     return req;
