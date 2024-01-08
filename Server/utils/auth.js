@@ -10,28 +10,41 @@ module.exports = {
     },
   }),
   authMiddleware: function ({ req }) {
-    // allows token to be sent via req.body, req.query, or headers
-    let token = req.body.token || req.query.token || req.headers.authorization;
-
-    // ["Bearer", "<tokenvalue>"]
-    if (req.headers.authorization) {
-      token = token.split(' ').pop().trim();
+    // Extract token from the Authorization header
+    let token = req.headers.authorization;
+    
+    if (!token) {
+      // Check other sources if the token is not in the headers
+      token = req.body.token || req.query.token;
     }
 
-    // Check the operation name to determine if authentication is required
-    const operationName = req.body.operationName || req.query.operationName;
-    
-    if (operationName === 'saveGame' || operationName === 'getSavedGames') {
-      // Authentication is required for saving or retrieving saved games
-      if (!token) {
-        throw module.exports.AuthenticationError;
-      }
+    if (token) {
+      // Extract the token from the "Bearer" scheme
+      token = token.replace('Bearer ', '').trim();
 
-      try {
-        const { data } = jwt.verify(token, secret, { maxAge: expiration });
-        req.user = data;
-      } catch {
-        throw module.exports.AuthenticationError;
+      // Check the operation name to determine if authentication is required
+      const operationName = req.body.operationName || req.query.operationName;
+
+      if (operationName === 'saveGame' || operationName === 'getSavedGames') {
+        // Authentication is required for saving or retrieving saved games
+        try {
+          const { data } = jwt.verify(token, secret, { maxAge: expiration });
+          req.user = data;
+        } catch (error) {
+          if (error.name === 'TokenExpiredError') {
+            throw new GraphQLError('Token has expired.', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+              },
+            });
+          } else {
+            throw new GraphQLError('Invalid token.', {
+              extensions: {
+                code: 'UNAUTHENTICATED',
+              },
+            });
+          }
+        }
       }
     }
 

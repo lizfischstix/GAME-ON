@@ -2,13 +2,13 @@ const typeDefs = `
   type User {
     _id: ID!
     username: String!
-    email: String
+    email: String!
+    password: String!
     gameCount: Int
     savedGames: [Game]
   }
 
   type Game {
-    id: ID!
     title: String !
     thumbnail: String 
     shortDescription: String
@@ -23,7 +23,7 @@ const typeDefs = `
   }
 
   input GameInput {
-    id: ID!
+    _id: ID!
     title: String !
     thumbnail: String 
     shortDescription: String
@@ -35,14 +35,13 @@ const typeDefs = `
   type Query {
     me: User
     searchGames(searchTerm: String!): [Game]
-    allGames: [String!]!
   }
 
   type Mutation {
     login(email: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
     saveGame(gameData: GameInput!): User
-    removeGame(id: ID!): User
+    removeGame(_id: ID!): User
   }
 `;
 
