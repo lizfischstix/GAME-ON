@@ -1,6 +1,5 @@
 const { User, Game } = require('../models');
 const { signToken, AuthenticationError } = require('../utils/auth');
-// const { AuthenticationError } = require('apollo-server-express'); look into this dependncy...?
 
 const resolvers = {
 
@@ -98,7 +97,7 @@ const resolvers = {
           }
 
           // Remove the game's ObjectId from the savedGames array
-          user.savedGames = user.savedGames.filter(savedGameId => savedGameId.toString() !== _id);
+          user.savedGames = user.savedGames.filter(savedGameId => savedGameId.toString() !== _id.toString());
 
           // Save the updated user document
           await user.save();
@@ -115,5 +114,4 @@ const resolvers = {
     },
   },
 };
-
-module.exports = resolvers;
+  module.exports = resolvers;

@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const SAVE_GAME = gql`
-mutation SaveGame($gameData: GameInput!) {
-    saveGame(gameData: $gameData) {
+export const REMOVE_GAME = gql`
+mutation RemoveGame($_id: ID!) {
+    removeGame(_id: $_id) {
       _id
       username
       email
@@ -17,4 +17,5 @@ mutation SaveGame($gameData: GameInput!) {
       }
     }
   }
-  `;
+  
+`;
