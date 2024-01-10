@@ -4,6 +4,9 @@ import App from './App.jsx';
 import Home from './pages/home.jsx';
 import Error from './pages/error.jsx';
 import About from './pages/about.jsx';
+import Dash from './pages/dash.jsx';
+import Login from './pages/login.jsx';
+import Signup from './pages/signup.jsx';
 
 const router = createBrowserRouter([
   {
@@ -19,7 +22,19 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <About />
-      }
+      },
+      {
+        path: "/dash",
+        element: <Dash />
+      },
+      {
+        path: "/login",
+        element: <Login />
+      },
+      {
+        path: "/signup",
+        element: <Signup />
+      },
     ],
   },
 ]);

@@ -1,135 +1,142 @@
 import * as React from 'react';
-import { Navigate } from 'react-router-dom';
-import { styled, alpha } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import { ButtonBase } from '@mui/material';
+import { Link } from 'react-router-dom';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import LoginRoundedIcon from '@mui/icons-material/LoginRounded';
+import AddBoxRoundedIcon from '@mui/icons-material/AddBoxRounded';
+import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import AutoGraphRoundedIcon from '@mui/icons-material/AutoGraphRounded';
+import WavingHandIcon from '@mui/icons-material/WavingHand';
+import { Tooltip } from '@mui/material';
 
-// Third-party imports
-const { useState } = React;
 
-// Local imports
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
-}));
+import Auth from "../utils/auth"
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
+export default function Nav({ isAuthenticated }) {
+  const [value, setValue] = React.useState(0);
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  width: '100%',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  },
-}));
-
-export default function Nav() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const handleDrawerOpen = () => {
-    setIsDrawerOpen(true);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
 
-  const handleDrawerClose = () => {
-    setIsDrawerOpen(false);
-  };
+   const logout = (event) => {
+     event.preventDefault();
+     Auth.logout();
+   };
 
   return (
-    <>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" sx={{ backgroundColor: '#550381' }}>
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-            >
-              <div className='mario'>GAME ON!</div>
-            </Typography>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search..."
-                inputProps={{ 'aria-label': 'search' }}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+    <Tabs
+      value={value}
+      onChange={handleChange}
+
+      orientation="horizontal"
+      aria-label="icon tabs"
+      indicatorColor= {{color: `#550381`}}
+    >
+      <Link to="/">
+        <Tooltip title="Home" placement="bottom" arrow>
+          <Tab
+            icon={
+              <HomeRoundedIcon sx={{ color: `#550381`, fontSize: 30 }} />
+            }
+            aria-label="Home"
+          />
+        </Tooltip>
+      </Link>
+
+      {Auth.loggedIn() ? (
+        <>
+          <Link to="/overview">
+            <Tooltip title="Dashboard" placement="bottom" arrow>
+              {" "}
+              <Tab
+                icon={
+                  <SportsEsportsIcon sx={{ color: `#550381`, fontSize: 30 }} />
+                }
+                aria-label="Overview"
               />
-            </Search>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          anchor="left"
-          open={isDrawerOpen}
-          onClose={handleDrawerClose}
-        >
-          <List>
-          <ListItem  onClick={() => {
-             handleDrawerClose();
-             navigate('/');
-            }}>
-              <ListItemText primary="Home" />
-            </ListItem>
-            <ListItem buttonbase onClick={() => {
-             handleDrawerClose();
-             navigate('/about');
-            }}>
-              <ListItemText primary="About" />
-            </ListItem>
-            {/* Add more list items for additional links */}
-          </List>
-        </Drawer>
-      </Box>
-    </>
+            </Tooltip>
+          </Link>
+
+          <Link to="/transaction">
+            <Tooltip title="Transaction List" placement="bottom" arrow>
+              <Tab
+                icon={
+                  <AssignmentRoundedIcon
+                    sx={{ color: `#550381`, fontSize: 30 }}
+                  />
+                }
+                aria-label="Transactions List"
+              />
+            </Tooltip>
+          </Link>
+
+          <Link to="/graphpage">
+            <Tooltip title="Spending Graphs" placement="bottom" arrow>
+              <Tab
+                icon={
+                  <AutoGraphRoundedIcon
+                    sx={{ color: `#550381`, fontSize: 30 }}
+                  />
+                }
+                aria-label="Transactions Graphs"
+              />
+            </Tooltip>
+          </Link>
+
+          <Link to="/home">
+            <Tooltip title="Log Out" placement="bottom" arrow>
+              <Tab
+                icon={
+                  <LoginRoundedIcon sx={{ color: `#550381`, fontSize: 30 }} />
+                }
+                aria-label="Home"
+                onClick={logout}
+              />
+            </Tooltip>
+          </Link>
+        </>
+      ) : (
+        <>
+          <Link to="/login">
+            <Tooltip title="Log In" placement="bottom" arrow>
+              {" "}
+              <Tab
+                icon={
+                  <LoginRoundedIcon sx={{ color: `#550381`, fontSize: 30 }} />
+                }
+                aria-label="Log In"
+              />
+            </Tooltip>
+          </Link>
+         
+          <Link to="/signup">
+            <Tooltip title="Sign Up" placement="bottom" arrow>
+              {" "}
+              <Tab
+                icon={
+                  <AddBoxRoundedIcon sx={{ color: `#550381`, fontSize: 30 }} />
+                }
+                aria-label="Sign Up"
+              />
+            </Tooltip>
+          </Link>
+
+          <Link to='/about'>
+            <Tooltip title="About Us" placement='bottom' arrow>
+              {" "}
+              <Tab
+                icon={
+                  <WavingHandIcon sx={{ color: `#550381`, fontSize: 30 }} />
+                }
+                aria-label='About Us'
+                />
+            </Tooltip>
+          </Link>
+        </>
+      )}
+    </Tabs>
   );
 }
