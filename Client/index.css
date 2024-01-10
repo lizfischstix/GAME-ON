@@ -1,15 +1,28 @@
 
 #root {
   background-color:#5D5D81;
+  height: 100vh;
+  font-family: 'Preahvihear';
+  font-size: 1.5rem;
+  color: silver
+  
 }
 @font-face {
   font-family: 'mario'; /* Choose a name for your font */
   src: url(./src/assets/fonts/Mario-Party-Hudson-Font.ttf) format('truetype'); /* Specify the path to your TTF file */
 }
+@font-face {
+ font-family: 'Preahvihear', sans-serif;
+  src: url('https://fonts.googleapis.com/css2?family=Preahvihear&display=swap') format('truetype');
+}
 .mario{
   font-family: 'mario';
   color: white;
   font-size: 3rem;
+}
+.bodyfont{
+  font-family:'Preahvihear', sans-serif;
+  color: silver;
 }
 /* ! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Document
