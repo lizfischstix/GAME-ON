@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "watch": "node index.js",
-    "seed": "node seeds/seed.js"
+    "watch": "nodemon"
   },
  
   "keywords": [],
@@ -18,7 +17,6 @@
     "express": "^4.17.2",
     "graphql": "^16.6.0",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^6.3.0",
     "mongoose": "^7.0.2"
   },
   "devDependencies": {
