@@ -2,7 +2,7 @@
   "name": "game-on",
   "version": "1.0.0",
   "description": "",
-  "main": "server/index.js",
+  "main": "index.js",
   "scripts": {
     "start": "node server/index.js",
     "develop": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    
+
   },
   "devDependencies": {
     "concurrently": "^5.1.0"
